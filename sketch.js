@@ -94,9 +94,9 @@ function BassShape(_offset) {
     rotate(this.rotation);
     strokeWeight(1);
     stroke(255, 255, 255, this.opacity);
-    rect(bass*2, bass*2, bass/10, bass/10);
+    rect(bass*2, bass*2, bass/5, bass/5);
     pop();
-    this.opacity = bass;
+    this.opacity = bass * 1.5;
     this.rotation += bass * 0.1;
   }
 
@@ -113,9 +113,9 @@ function MidShape(_offset) {
     rotate(this.rotation);
     strokeWeight(1);
     stroke(255, 255, 255, this.opacity);
-    rect(treble*2, treble*2, treble/10, treble/10);
+    rect(treble*2, treble*2, treble/5, treble/5);
     pop();
-    this.opacity = mid;
+    this.opacity = mid * 1.5;
     this.rotation += mid * 0.1;
   }
 
