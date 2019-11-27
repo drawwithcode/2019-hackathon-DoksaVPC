@@ -10,7 +10,9 @@ var treble;
 var playButton;
 var canv;
 var a;
-var shape;
+var circleShape;
+var allBassShapes = [];
+var allMidShapes = [];
 
 function preload() {
   bumper = loadSound("./assets/TG1_new.mp3");
@@ -21,17 +23,20 @@ function setup() {
   a = width / 100;
   ellipseMode(CENTER);
   rectMode(CENTER);
+  angleMode(DEGREES);
   playButton = createButton('PLAY');
   playButton.style('display', 'none');
-  playButton.style('border-radius', '100px');
-  playButton.style('background-color', 'rgb(60, 60, 60)');
-  playButton.style('color', 'rgb(230, 230, 230)');
-  playButton.style('padding', '12px 0px');
-  playButton.style('width', '200px');
-  playButton.style('border-style', 'none');
-  playButton.style('font-size', '20pt');
   playButton.position(windowWidth / 2 - 100, windowHeight / 2);
-  shape = new Shape();
+  circleShape = new Circle();
+  for (i = 0; i < 3; i++){
+    var bassShape = new BassShape(i * 120);
+    allBassShapes.push(bassShape);
+  }
+  for (i = 0; i < 6; i++){
+    var midShape = new MidShape(i * 60);
+    allMidShapes.push(midShape);
+  }
+  bassShape = new BassShape();
   analyzer = new p5.Amplitude();
   analyzer.setInput(bumper);
   fft = new p5.FFT();
@@ -42,24 +47,28 @@ function draw() {
   background(20);
   a = width / 100;
   volume = analyzer.getLevel();
-  volume = map(volume, 0, 1, 0, height / 2);
+  volume = map(volume, 0, 1, 0, height);
   var spectrum = fft.analyze();
   bass = fft.getEnergy('bass');
-  lowMid = fft.getEnergy('lowMid');
   mid = fft.getEnergy('mid');
-  hiMid = fft.getEnergy('highMid');
   treble = fft.getEnergy('treble');
   playButton.position(windowWidth / 2 - 100, windowHeight / 2);
   playButton.mousePressed(playSong);
   if (bumper.isPlaying() === true) {
     playButton.style('display', 'none');
-    shape.display();
+    circleShape.display();
+    for (var i = 0; i < 3; i++){
+      allBassShapes[i].display();
+    }
+    for (var i = 0; i < 6; i++){
+      allMidShapes[i].display();
+    }
   } else {
     playButton.style('display', 'block');
   }
 }
 
-function Shape() {
+function Circle() {
   this.opacity = 255;
 
   this.display = function() {
@@ -67,9 +76,47 @@ function Shape() {
     noFill();
     strokeWeight(1);
     stroke(255, 255, 255, this.opacity);
-    rect(width / 2, height / 2, volume, volume);
+    ellipse(width / 2, height / 2, volume);
     pop();
-    this.opacity -= 0.5;
+    this.opacity = volume*2;
+  }
+
+}
+
+function BassShape(_offset) {
+  this.opacity = 255;
+  this.rotation = _offset;
+
+  this.display = function() {
+    push();
+    noFill();
+    translate(width/2,height/2);
+    rotate(this.rotation);
+    strokeWeight(1);
+    stroke(255, 255, 255, this.opacity);
+    rect(bass/3, bass/3, bass/10, bass/10);
+    pop();
+    this.opacity = bass;
+    this.rotation += bass * 0.1;
+  }
+
+}
+
+function MidShape(_offset) {
+  this.opacity = 255;
+  this.rotation = _offset;
+
+  this.display = function() {
+    push();
+    noFill();
+    translate(width/2,height/2);
+    rotate(this.rotation);
+    strokeWeight(1);
+    stroke(255, 255, 255, this.opacity);
+    rect(treble, treble, treble/10, treble/10);
+    pop();
+    this.opacity = mid;
+    this.rotation += mid * 0.1;
   }
 
 }
