@@ -50,8 +50,10 @@ function draw() {
   volume = map(volume, 0, 1, 0, height);
   var spectrum = fft.analyze();
   bass = fft.getEnergy('bass');
+  bass = map(volume, 0, 255, 0, height);
   mid = fft.getEnergy('mid');
   treble = fft.getEnergy('treble');
+  treble = map(treble, 0, 255, 0, height);
   playButton.position(windowWidth / 2 - 100, windowHeight / 2);
   playButton.mousePressed(playSong);
   if (bumper.isPlaying() === true) {
@@ -96,8 +98,7 @@ function BassShape(_offset) {
     stroke(255, 255, 255, this.opacity);
     rect(bass*2, bass*2, bass/5, bass/5);
     pop();
-    this.opacity = bass * 1.5;
-    this.rotation += bass * 0.1;
+    this.rotation += bass * 0.08;
   }
 
 }
@@ -115,8 +116,7 @@ function MidShape(_offset) {
     stroke(255, 255, 255, this.opacity);
     rect(treble*2, treble*2, treble/5, treble/5);
     pop();
-    this.opacity = mid * 1.5;
-    this.rotation += mid * 0.1;
+    this.rotation += treble * 0.08;
   }
 
 }
